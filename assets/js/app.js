@@ -4,10 +4,9 @@
    EDIT PRICES AND CONTACT DETAILS IN THE `CONFIG` AND `PRODUCTS`
    OBJECTS BELOW. Nothing else needs touching.
 
-   >>> IMPORTANT <<<
-   The `price` values are PLACEHOLDERS chosen from typical
-   Pakistani market rates for imported PU wallets. They are NOT
-   your real prices. Replace every one before sharing the site.
+   Prices below were set by the owner on 1 Sep 2026. To change
+   one, edit its `price` field — the card, the lightbox and the
+   WhatsApp order message all read from that single number.
    ============================================================ */
 
 const CONFIG = {
@@ -26,7 +25,7 @@ const PRODUCTS = [
     name: 'Metro Trifold',
     cat: 'trifold',
     badge: 'Bestseller',
-    price: 1490,
+    price: 1190,
     imgs: ['metro-trifold-1', 'metro-trifold-4', 'metro-trifold-3', 'metro-trifold-2'],
     desc: 'Compact trifold with a steel snap closure. Opens flat, stays slim in the back pocket.',
     colors: [['Tan', '#a9713f'], ['Dark Brown', '#5b3b28'], ['Black', '#1b1b1b'], ['Olive', '#4a4429']],
@@ -44,7 +43,7 @@ const PRODUCTS = [
     name: 'Voyager Long Zip',
     cat: 'long',
     badge: 'Big capacity',
-    price: 1690,
+    price: 1390,
     imgs: ['voyager-long-3', 'voyager-long-1', 'voyager-long-2'],
     desc: 'Full-length zip clutch with a detachable wrist strap. Fits notes flat — no folding.',
     colors: [['Brown', '#4a352a'], ['Black', '#17171a']],
@@ -62,7 +61,7 @@ const PRODUCTS = [
     name: 'Executive Long Wallet',
     cat: 'long',
     badge: null,
-    price: 1590,
+    price: 1290,
     imgs: ['executive-long-1'],
     desc: 'Slim long-fold for those who carry more cards than cash. Slips into a jacket pocket.',
     colors: [['Brown', '#5b4034'], ['Black', '#1a1a1c']],
@@ -80,7 +79,7 @@ const PRODUCTS = [
     name: 'Safari Trifold',
     cat: 'trifold',
     badge: null,
-    price: 1390,
+    price: 1090,
     imgs: ['safari-trifold-1'],
     desc: 'Two-tone trifold with a croc-textured side panel. Snap closure, generous card space.',
     colors: [['Dark Brown', '#4e3a2e'], ['Tan', '#a56b3c'], ['Navy', '#2c3340']],
@@ -98,7 +97,7 @@ const PRODUCTS = [
     name: 'Heritage Trifold',
     cat: 'trifold',
     badge: null,
-    price: 1390,
+    price: 1090,
     imgs: ['heritage-trifold-1'],
     desc: 'Clean trifold with a tan leather header tab. Deep fold, holds a thick stack of notes.',
     colors: [['Tan', '#a3653a'], ['Navy', '#2b3242'], ['Brown', '#5d4436']],
@@ -116,7 +115,7 @@ const PRODUCTS = [
     name: 'Crest Bifold',
     cat: 'bifold',
     badge: null,
-    price: 1290,
+    price: 990,
     imgs: ['crest-bifold-1'],
     desc: 'Bifold with a croc-textured crest patch and a red woven tag. Everyday size.',
     colors: [['Navy', '#2a3140'], ['Tan', '#a5683a'], ['Brown', '#54423a']],
@@ -134,7 +133,7 @@ const PRODUCTS = [
     name: 'Pillar Bifold',
     cat: 'bifold',
     badge: null,
-    price: 1290,
+    price: 990,
     imgs: ['pillar-bifold-1'],
     desc: 'Bifold with a tall croc-textured column inlay. Understated, holds its shape.',
     colors: [['Black', '#1e1e20'], ['Tan', '#a76c3f'], ['Brown', '#584438']],
@@ -152,7 +151,7 @@ const PRODUCTS = [
     name: 'Monogram Bifold',
     cat: 'bifold',
     badge: 'Slimmest',
-    price: 1190,
+    price: 890,
     imgs: ['monogram-bifold-1'],
     desc: 'Soft suede-finish bifold with a debossed laurel monogram. The slimmest one we carry.',
     colors: [['Taupe', '#6b5952'], ['Camel', '#b98a5c'], ['Grey', '#93999b']],
@@ -170,7 +169,7 @@ const PRODUCTS = [
     name: 'Monogram Trifold',
     cat: 'trifold',
     badge: null,
-    price: 1290,
+    price: 990,
     imgs: ['monogram-trifold-1'],
     desc: 'The Monogram in a taller vertical cut. More card space, same suede finish.',
     colors: [['Taupe', '#6d5b54'], ['Camel', '#bb8d5f'], ['Grey', '#959b9d']],
@@ -188,7 +187,7 @@ const PRODUCTS = [
     name: 'Essential Bifold',
     cat: 'bifold',
     badge: 'Best value',
-    price: 1190,
+    price: 890,
     imgs: ['essential-bifold-1'],
     desc: 'No patches, no logos, no fuss. A plain bifold that does exactly one job well.',
     colors: [['Black', '#181818'], ['Dark Brown', '#3d2b22'], ['Tan', '#9e6134']],
@@ -206,7 +205,7 @@ const PRODUCTS = [
     name: 'Bloom Card Wallet',
     cat: 'card',
     badge: 'Gift pick',
-    price: 690,
+    price: 570,
     imgs: ['bloom-card-1'],
     desc: 'Small zip-around card wallet with a printed character front. Popular as a gift.',
     colors: [['Print', '#e6b9c8']],

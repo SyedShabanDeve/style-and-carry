@@ -8,25 +8,25 @@ Orders come in over WhatsApp; payment is cash on delivery.
 
 ---
 
-## ⚠️ Do this first: fix the prices
+## Changing a price
 
-Every price on the site is a **placeholder**. They were picked from typical Pakistani
-market rates for imported PU wallets — they are *not* your real prices.
+Prices were set by the owner on 1 Sep 2026 and range from Rs 570 to Rs 1,390.
 
-Open `assets/js/app.js` and edit the `price` field on each product in the `PRODUCTS`
+Open `assets/js/app.js` and edit the `price` field on the product in the `PRODUCTS`
 array. Prices are plain numbers in rupees, no commas:
 
 ```js
 {
   slug: 'metro-trifold',
   name: 'Metro Trifold',
-  price: 1490,        // <-- change this
+  price: 1190,        // <-- change this
   ...
 }
 ```
 
 Everything else on the page — the card, the lightbox, the WhatsApp message — reads
-from that one number.
+from that one number. If the cheapest product changes, also update the
+"Starting at Rs 570" badge in `index.html`.
 
 ---
 
