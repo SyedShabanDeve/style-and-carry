@@ -40,38 +40,21 @@ const PRODUCTS = [
   },
   {
     slug: 'voyager-long',
-    name: 'Voyager Long Zip',
+    name: 'Voyager Long Wallet',
     cat: 'long',
     badge: 'Big capacity',
     price: 1390,
-    imgs: ['voyager-long-3', 'voyager-long-1', 'voyager-long-2'],
-    desc: 'Full-length zip clutch with a detachable wrist strap. Fits notes flat — no folding.',
+    imgs: ['voyager-long-3', 'voyager-long-1', 'voyager-long-2', 'executive-long-1'],
+    desc: 'Full-length wallet with a detachable wrist strap. Notes go in flat — no folding, no creases.',
     colors: [['Brown', '#4a352a'], ['Black', '#17171a']],
     specs: ['Zip close', '12+ card slots', 'Wrist strap'],
     feats: [
-      'Long zip closure — nothing falls out',
+      'Zip closure runs the full length — nothing falls out',
       '12 card slots, 2 full-length note sleeves, SIM pockets',
       'Detachable leather wrist strap included',
       'Approx. 19.5 x 10 x 3.5 cm',
-      'Textured PU leather with metal corner trim'
-    ]
-  },
-  {
-    slug: 'executive-long',
-    name: 'Executive Long Wallet',
-    cat: 'long',
-    badge: null,
-    price: 1290,
-    imgs: ['executive-long-1'],
-    desc: 'Slim long-fold for those who carry more cards than cash. Slips into a jacket pocket.',
-    colors: [['Brown', '#5b4034'], ['Black', '#1a1a1c']],
-    specs: ['Bi-fold long', 'Card-heavy', 'Wrist strap'],
-    feats: [
-      'Slim long-fold profile — thinner than a zip clutch',
-      'Deep card column plus full-length note sleeve',
-      'Detachable wrist strap',
-      'Cross-hatch textured PU leather',
-      'Approx. 18.5 x 9.5 x 2 cm'
+      'Textured PU leather with metal corner trim',
+      'Available in brown and black'
     ]
   },
   {
