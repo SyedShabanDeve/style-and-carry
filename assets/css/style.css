@@ -116,6 +116,32 @@ h2{font-family:var(--serif);font-size:clamp(28px,3.6vw,40px);line-height:1.12;
   font-size:13.5px;font-weight:650;padding:10px 15px;border-radius:9px;transition:background .18s}
 .order:hover{background:#186b42}
 
+/* ---------- 7-day promise band ---------- */
+.promise{background:linear-gradient(135deg,#e8c49a 0%,#d9a870 46%,#c08a52 100%);
+  position:relative;overflow:hidden;padding:56px 0}
+.promise:before{content:"";position:absolute;inset:0;opacity:.14;
+  background:repeating-linear-gradient(45deg,transparent 0 22px,rgba(255,255,255,.5) 22px 24px)}
+.promise-in{position:relative;z-index:2;display:grid;
+  grid-template-columns:auto 1fr;gap:38px;align-items:center}
+.seal{width:150px;height:150px;flex:0 0 auto;filter:drop-shadow(0 10px 22px rgba(90,52,20,.34))}
+.seal .spin{transform-origin:75px 75px;animation:sealspin 26s linear infinite}
+@keyframes sealspin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.seal .spin{animation:none}}
+.promise h2{color:#3a230f;margin:0 0 10px}
+.promise .plede{color:#5a3a1c;font-size:17px;max-width:56ch;margin:0 0 22px;font-weight:500}
+.pts{display:flex;gap:12px;flex-wrap:wrap}
+.pt{display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.62);
+  border:1px solid rgba(90,52,20,.16);border-radius:999px;padding:9px 17px;
+  font-size:14px;font-weight:600;color:#4a2e14}
+.pt svg{flex:0 0 auto;color:#1f7a4d}
+@media(max-width:760px){
+  .promise{padding:42px 0}
+  .promise-in{grid-template-columns:1fr;gap:22px;text-align:center;justify-items:center}
+  .promise .plede{margin-left:auto;margin-right:auto}
+  .pts{justify-content:center}
+  .seal{width:118px;height:118px}
+}
+
 /* ---------- why / steps ---------- */
 .dark{background:linear-gradient(165deg,#241b16,#1a1310);color:var(--cream)}
 .dark h2{color:var(--cream)} .dark .sec-head p{color:#b8a89a}
