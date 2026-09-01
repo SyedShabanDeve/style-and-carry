@@ -171,16 +171,17 @@ const PRODUCTS = [
     cat: 'bifold',
     badge: 'Best value',
     price: 890,
-    imgs: ['essential-bifold-1'],
-    desc: 'No patches, no logos, no fuss. A plain bifold that does exactly one job well.',
+    imgs: ['essential-bifold-1', 'essential-bifold-2'],
+    desc: 'No patches, no logos, no fuss. A plain bifold that does exactly one job well — and it arrives in a gift box.',
     colors: [['Black', '#181818'], ['Dark Brown', '#3d2b22'], ['Tan', '#9e6134']],
-    specs: ['Plain', 'ID window', '3 colours'],
+    specs: ['Plain', 'Gift box', '3 colours'],
     feats: [
       'Completely plain front — no visible branding',
+      'Arrives in a black gift box, ready to give',
       'Clear ID window plus 6 card slots',
       'Two full-length note compartments',
       'Smooth finish with tan contrast stitching',
-      'Available in 3 colours'
+      'Available in black, dark brown and tan'
     ]
   },
   {

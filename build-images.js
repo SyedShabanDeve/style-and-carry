@@ -22,6 +22,7 @@ const MAP = [
   ['WhatsApp Image 2026-08-31 at 3.20.32 PM.jpeg',     'monogram-bifold-1'],
   ['WhatsApp Image 2026-08-31 at 3.20.32 PM (1).jpeg', 'monogram-trifold-1'],
   ['WhatsApp Image 2026-08-31 at 3.20.33 PM.jpeg',     'essential-bifold-1'],
+  ['a5fdd738a73e73a3e7f8bb8e8b86f511.jpg',             'essential-bifold-2'],
 ];
 
 (async () => {
