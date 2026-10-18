@@ -9,7 +9,8 @@ import api from '../../api/client';
 import { money, imageUrl } from '../../lib/format';
 import { selectAllCategories } from '../../store/contentSlice';
 import { sizeText, checkFit, IMAGE_SIZES } from '../../lib/imageSizes';
-import { X, Plus, Upload, Image, Alert, ArrowRight } from '../../components/ui/Icons';
+import { X, Plus, Upload, Image, Alert, ArrowRight, Play } from '../../components/ui/Icons';
+import { prepareVideo } from '../../lib/videoShrink';
 
 const BLANK = {
   name: '',
@@ -21,6 +22,7 @@ const BLANK = {
   badge: '',
   description: '',
   images: [],
+  video: '',
   colors: [],
   specs: [],
   features: [],
@@ -107,6 +109,8 @@ export default function ProductForm() {
   const [error, setError] = useState(null);
   const [slugTouched, setSlugTouched] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+  const [video, setVideo] = useState(null); // { label, pct } while working
+  const videoRef = useRef(null);
 
   /* A new product starts in the first category once the list has loaded. */
   useEffect(() => {
@@ -209,7 +213,27 @@ export default function ProductForm() {
     }
   };
 
-  const saving_ = saving || uploading;
+  /* One short clip: shrunk in the browser if needed, then uploaded. */
+  const pickVideo = async (file) => {
+    if (!file) return;
+    setError(null);
+    try {
+      setVideo({ label: 'Getting the video ready…', pct: 0 });
+      const ready = await prepareVideo(file, (p) => setVideo({ label: 'Making the video smaller for the web…', pct: Math.round(p * 90) }));
+      setVideo({ label: 'Uploading…', pct: 95 });
+      const data = new FormData();
+      data.append('video', ready.blob, ready.name);
+      const res = await api.upload('/admin/upload-video', data);
+      set('video', res.video);
+      dispatch(pushToast({ title: 'Video uploaded', message: `${Math.round(ready.seconds)} seconds, ${(ready.blob.size / 1048576).toFixed(1)} MB. Press Save to keep it on the product.`, kind: 'ok' }));
+    } catch (err) {
+      setError(err.message || 'The video could not be uploaded');
+    } finally {
+      setVideo(null);
+    }
+  };
+
+  const saving_ = saving || uploading || Boolean(video);
 
   return (
     /* Column layout: the fields scroll, the action bar stays pinned at the
@@ -564,6 +588,48 @@ export default function ProductForm() {
               <span className="hint" style={{ fontSize: 12, color: 'var(--ink-3)' }}>
                 Names refer to files already in the site's image folder. Press Enter to add.
               </span>
+            </div>
+          </div>
+
+          {/* ---------- video ---------- */}
+          <div className="a-panel">
+            <div className="a-panel-head">
+              <div>
+                <h2>Video</h2>
+                <p>Optional. A short clip, 5 to 10 seconds, shown after the first photo. It plays on its own, without sound.</p>
+              </div>
+            </div>
+            <div className="a-panel-body">
+              {form.video ? (
+                <div className="pv-wrap">
+                  <video className="pv-video" src={form.video} muted loop autoPlay playsInline controls />
+                  <div className="pv-act">
+                    <button type="button" className="btn btn-outline btn-sm" onClick={() => videoRef.current?.click()} disabled={saving_}>
+                      <Upload size={14} /> Replace
+                    </button>
+                    <button type="button" className="btn btn-ghost btn-sm" onClick={() => set('video', '')} disabled={saving_}>
+                      <X size={14} /> Remove
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button type="button" className="pv-drop" onClick={() => videoRef.current?.click()} disabled={saving_}>
+                  {video ? <span className="spin" /> : <Play size={20} />}
+                  <b>{video ? video.label : 'Add a video'}</b>
+                  <span>{video ? `${video.pct}%` : 'MP4 or MOV from your phone. Large clips are made smaller for you.'}</span>
+                </button>
+              )}
+              {video && form.video && <p className="hint">{video.label} {video.pct}%</p>}
+              <input
+                ref={videoRef}
+                type="file"
+                accept="video/mp4,video/webm,video/quicktime"
+                hidden
+                onChange={(e) => {
+                  pickVideo(e.target.files?.[0]);
+                  e.target.value = '';
+                }}
+              />
             </div>
           </div>
 

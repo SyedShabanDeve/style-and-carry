@@ -815,3 +815,44 @@
     padding: 0 10px;
   }
 }
+
+/* product form: video */
+.admin .pv-drop {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 22px 14px;
+  border: 1.5px dashed var(--line-2);
+  border-radius: 14px;
+  background: transparent;
+  text-align: center;
+  color: var(--ink);
+  cursor: pointer;
+}
+.admin .pv-drop:hover {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+}
+.admin .pv-drop svg {
+  color: var(--gold-ink);
+}
+.admin .pv-drop span {
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+.admin .pv-wrap {
+  display: grid;
+  gap: 10px;
+}
+.admin .pv-video {
+  width: 100%;
+  max-height: 320px;
+  border-radius: 12px;
+  background: #0b0c0e;
+  object-fit: contain;
+}
+.admin .pv-act {
+  display: flex;
+  gap: 8px;
+}

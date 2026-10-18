@@ -142,4 +142,40 @@ router.post('/upload', requireAuth, requireAdmin, (req, res) => {
   });
 });
 
+/* ---------- product video ----------
+   One short clip per product (5-10 seconds). The dashboard shrinks it in the
+   browser first; the limit stays under what one request to a Netlify
+   Function can carry. */
+const VIDEO_TYPES = { 'video/mp4': '.mp4', 'video/webm': '.webm', 'video/quicktime': '.mov' };
+export const VIDEO_MAX = Math.floor(5.5 * 1024 * 1024);
+
+const videoUpload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => cb(null, UPLOAD_DIR),
+    filename: (req, file, cb) => {
+      const safe = path
+        .basename(file.originalname, path.extname(file.originalname))
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '')
+        .slice(0, 40) || 'video';
+      cb(null, `${safe}-${Date.now().toString(36)}${VIDEO_TYPES[file.mimetype.split(';')[0]] || '.mp4'}`);
+    },
+  }),
+  limits: { fileSize: VIDEO_MAX, files: 1 },
+  fileFilter: (req, file, cb) => {
+    if (!VIDEO_TYPES[file.mimetype.split(';')[0]]) return cb(new Error('Use an MP4, WebM or MOV video'));
+    cb(null, true);
+  },
+});
+
+router.post('/upload-video', requireAuth, requireAdmin, (req, res) => {
+  videoUpload.single('video')(req, res, (err) => {
+    if (err?.code === 'LIMIT_FILE_SIZE') return res.status(400).json({ error: 'This video is too large. Keep it to about 10 seconds.' });
+    if (err) return res.status(400).json({ error: err.message });
+    if (!req.file) return res.status(400).json({ error: 'No video was sent' });
+    res.json({ video: `/uploads/${req.file.filename}` });
+  });
+});
+
 export default router;

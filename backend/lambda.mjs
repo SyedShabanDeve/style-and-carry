@@ -29,6 +29,9 @@ const MIME = {
   '.png': 'image/png',
   '.webp': 'image/webp',
   '.avif': 'image/avif',
+  '.mp4': 'video/mp4',
+  '.webm': 'video/webm',
+  '.mov': 'video/quicktime',
 };
 
 let ready;
@@ -63,17 +66,40 @@ export const handler = async (event, context) => {
     const name = path.basename(event.path);
     const buf = await uploads.get(name, { type: 'arrayBuffer' });
     if (!buf) return { statusCode: 404, body: 'Not found' };
+    const all = Buffer.from(buf);
+    const type = MIME[path.extname(name).toLowerCase()] || 'application/octet-stream';
+    // Videos are asked for in byte ranges (Safari insists on it to play one).
+    const range = /^bytes=(\d*)-(\d*)$/.exec(event.headers?.range || '');
+    if (range && (range[1] || range[2])) {
+      let start = range[1] ? Number(range[1]) : all.length - Number(range[2]);
+      let end = range[1] && range[2] ? Number(range[2]) : all.length - 1;
+      start = Math.max(0, start);
+      end = Math.min(end, all.length - 1);
+      if (start > end) return { statusCode: 416, headers: { 'Content-Range': `bytes */${all.length}` }, body: '' };
+      return {
+        statusCode: 206,
+        headers: {
+          'Content-Type': type,
+          'Accept-Ranges': 'bytes',
+          'Content-Range': `bytes ${start}-${end}/${all.length}`,
+          'Cache-Control': 'public, max-age=31536000, immutable',
+        },
+        body: all.subarray(start, end + 1).toString('base64'),
+        isBase64Encoded: true,
+      };
+    }
     return {
       statusCode: 200,
       headers: {
-        'Content-Type': MIME[path.extname(name).toLowerCase()] || 'application/octet-stream',
+        'Content-Type': type,
+        'Accept-Ranges': 'bytes',
         // Upload names are unique and never reused, so the file can be kept
         // for good, by browsers and by Netlify's CDN (no function call after
         // the first visit).
         'Cache-Control': 'public, max-age=31536000, immutable',
         'Netlify-CDN-Cache-Control': 'public, durable, max-age=31536000, immutable',
       },
-      body: Buffer.from(buf).toString('base64'),
+      body: all.toString('base64'),
       isBase64Encoded: true,
     };
   }

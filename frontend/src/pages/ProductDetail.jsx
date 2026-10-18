@@ -14,7 +14,7 @@ import { fetchProduct, clearCurrent, selectLiveProducts } from '../store/product
 import { addItem } from '../store/cartSlice';
 import { pushToast, openCart } from '../store/uiSlice';
 import { selectSettings } from '../store/settingsSlice';
-import { money, whatsappLink, pricing, stockState } from '../lib/format';
+import { money, whatsappLink, pricing, stockState, imageUrl } from '../lib/format';
 import { useCategoryName, selectContent, useFill } from '../store/contentSlice';
 import ProductReviews from '../components/shop/Reviews';
 import {
@@ -27,6 +27,7 @@ import {
   ChevronLeft,
   Wallet,
   ArrowRight,
+  Play,
 } from '../components/ui/Icons';
 import { useMoney } from '../lib/currency';
 
@@ -103,6 +104,9 @@ export default function ProductDetail() {
   const { price, compareAt, saving, off } = pricing(product);
   const max = Math.min(20, left || 20);
   const images = product.images?.length ? product.images : [null];
+  /* The clip, when there is one, comes right after the first photo. */
+  const media = images.map((img) => ({ img }));
+  if (product.video) media.splice(1, 0, { video: product.video, poster: images[0] });
   const freeOver = settings.freeDeliveryOver || 2500;
 
   /* Same category first, then anything else, so there is always something. */
@@ -125,7 +129,8 @@ export default function ProductDetail() {
     }
   };
 
-  const step = (d) => setShot((s) => (s + d + images.length) % images.length);
+  const step = (d) => setShot((s) => (s + d + media.length) % media.length);
+  const slide = media[Math.min(shot, media.length - 1)];
 
   return (
     <>
@@ -149,18 +154,26 @@ export default function ProductDetail() {
 
       <div className="wrap pd">
         {/* ---------- gallery ---------- */}
-        <div className={`pd-gal${images.length > 1 ? ' has-thumbs' : ''}`}>
+        <div className={`pd-gal${media.length > 1 ? ' has-thumbs' : ''}`}>
           <div className="pd-main">
-            <ProductImage
-              key={images[shot]}
-              name={images[shot]}
-              alt={product.name}
-              width={900}
-              height={900}
-              priority
-            />
+            {slide.video ? (
+              <video
+                key={slide.video}
+                className="pd-video"
+                src={slide.video}
+                poster={slide.poster ? imageUrl(slide.poster) : undefined}
+                autoPlay
+                muted
+                loop
+                playsInline
+                controls
+                aria-label={`${product.name} video`}
+              />
+            ) : (
+              <ProductImage key={slide.img} name={slide.img} alt={product.name} width={900} height={900} priority />
+            )}
             {off > 0 && !soldOut && <span className="tag tag-sale pd-off">-{off}%</span>}
-            {images.length > 1 && (
+            {media.length > 1 && (
               <>
                 <button type="button" className="pd-nav prev" onClick={() => step(-1)} aria-label="Previous photo">
                   <ChevronLeft size={18} />
@@ -169,23 +182,28 @@ export default function ProductDetail() {
                   <ChevronRight size={18} />
                 </button>
                 <span className="pd-count">
-                  {shot + 1} / {images.length}
+                  {shot + 1} / {media.length}
                 </span>
               </>
             )}
           </div>
-          {images.length > 1 && (
+          {media.length > 1 && (
             <div className="pd-thumbs">
-              {images.map((img, i) => (
+              {media.map((m, i) => (
                 <button
                   type="button"
-                  key={`${img}-${i}`}
-                  className={i === shot ? 'on' : undefined}
+                  key={`${m.video || m.img}-${i}`}
+                  className={[i === shot && 'on', m.video && 'is-video'].filter(Boolean).join(' ') || undefined}
                   onClick={() => setShot(i)}
-                  aria-label={`View photo ${i + 1}`}
+                  aria-label={m.video ? 'Play the video' : `View photo ${i + 1}`}
                   aria-current={i === shot || undefined}
                 >
-                  <ProductImage name={img} square width={80} height={80} />
+                  <ProductImage name={m.video ? m.poster : m.img} square width={80} height={80} />
+                  {m.video && (
+                    <span className="pd-play" aria-hidden="true">
+                      <Play size={14} />
+                    </span>
+                  )}
                 </button>
               ))}
             </div>

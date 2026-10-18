@@ -36,7 +36,7 @@ import {
 
 const router = Router();
 const DAY = 24 * 3600 * 1000;
-const PHOTO_NAME = /^[A-Za-z0-9][A-Za-z0-9._-]{0,150}\.(jpe?g|png|webp|avif)$/i;
+const PHOTO_NAME = /^[A-Za-z0-9][A-Za-z0-9._-]{0,150}\.(jpe?g|png|webp|avif|mp4|webm|mov)$/i;
 
 router.use(requireAuth, (req, res, next) => {
   if (req.user?.role !== 'owner') {

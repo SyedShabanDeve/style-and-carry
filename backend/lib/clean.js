@@ -19,6 +19,12 @@ export function imagePath(v) {
   return '';
 }
 
+/** An uploaded product video (short clip), or empty. */
+export function videoPath(v) {
+  const s = str(v, 300);
+  return /^\/uploads\/[\w.-]+\.(mp4|webm|mov)$/i.test(s) && !s.includes('..') ? s : '';
+}
+
 /** A link for a button: a path on this site, or an http(s) address. */
 export function link(v) {
   const s = str(v, 300);

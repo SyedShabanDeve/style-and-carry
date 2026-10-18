@@ -14,7 +14,7 @@ export const BACKUP_VERSION = 1;
 export const KEEP_COPIES = 12; // server copies kept (about three months of weeks)
 export const REMIND_AFTER_DAYS = 7;
 
-const PHOTO = /\/uploads\/([A-Za-z0-9][A-Za-z0-9._-]{0,150}\.(?:jpe?g|png|webp|avif))/gi;
+const PHOTO = /\/uploads\/([A-Za-z0-9][A-Za-z0-9._-]{0,150}\.(?:jpe?g|png|webp|avif|mp4|webm|mov))/gi;
 
 /** Every uploaded photo the store data points at, by file name. */
 export function photoNames(db) {

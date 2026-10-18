@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { read, update, uid } from '../db.js';
 import { requireAuth, requireAdmin } from '../middleware/auth.js';
 import { ratingIndex } from './reviews.js';
-import { imagePath } from '../lib/clean.js';
+import { imagePath, videoPath } from '../lib/clean.js';
 
 /** Adds the star rating from approved reviews to each product. */
 const withRatings = (list) => {
@@ -40,6 +40,8 @@ function sanitise(body, existing = {}) {
     badge: body.badge === undefined ? existing.badge ?? null : body.badge ? String(body.badge).trim() : null,
     description: String(body.description ?? existing.description ?? '').trim(),
     images: arr(body.images, existing.images ?? []).map(imagePath).filter(Boolean),
+    // one short clip (5-10 seconds), shown after the first photo
+    video: body.video === undefined ? existing.video || '' : videoPath(body.video),
     colors: arr(body.colors, existing.colors ?? []).filter(
       (c) => Array.isArray(c) && c.length === 2
     ),

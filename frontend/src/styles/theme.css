@@ -566,3 +566,33 @@ h3,
     text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55);
   }
 }
+
+/* ---------- product video ---------- */
+.pd-main .pd-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  background: #0b0c0e;
+}
+.pd-thumbs button.is-video {
+  position: relative;
+}
+.pd-play {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(8, 9, 10, 0.35);
+  color: #fff;
+  border-radius: inherit;
+}
+.pd-play svg {
+  width: 26px;
+  height: 26px;
+  padding: 6px;
+  border-radius: 50%;
+  background: var(--gold-grad);
+  color: #111214;
+}
