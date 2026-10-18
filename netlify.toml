@@ -1,0 +1,34 @@
+# Test copy of the shop on Netlify: the built frontend as static files, and
+# the Express API as one Netlify Function that keeps its data in Netlify Blobs.
+# See "Test site on Netlify" in README.md.
+
+[build]
+  publish = "frontend/dist"
+  functions = "backend/netlify"
+  command = "npm --prefix frontend ci && npm --prefix frontend run build && npm --prefix backend ci"
+
+[functions]
+  # The default bundler keeps the backend as ES modules (esbuild would turn it
+  # into CommonJS, where import.meta is empty and the app fails to start).
+  node_bundler = "nft"
+
+# The API, uploaded photos, robots.txt and sitemap.xml are routed to the
+# function by the paths listed in backend/netlify/api.mjs.
+
+# Every other path is a page of the React app.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

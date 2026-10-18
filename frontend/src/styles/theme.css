@@ -1,0 +1,568 @@
+/* ============================================================
+   THEME v5: "Obsidian & Gold"
+   Deep obsidian, warm ivory and champagne gold, to sit with the
+   silver crest logo and the watches and leather in the catalogue.
+   Loaded after index.css and admin.css, so it only has to say
+   what changes. The dashboard's own theme is in admin-theme.css.
+   ============================================================ */
+
+/* ---------- 1. tokens ---------- */
+:root {
+  --brand: #111214;
+  --brand-2: #26282c;
+  --brand-3: #3a3d42;
+  --brand-soft: #efede8;
+  --on-brand: #ffffff;
+
+  /* gold: --gold fills buttons and tags (with dark text on top);
+     --gold-ink is the darker gold that is safe for small text */
+  --gold: #c4a052;
+  --gold-2: #d4b267;
+  --gold-soft: #f4eddd;
+  --gold-ink: #876628;
+  --gold-hi: #f1dca4;
+  --on-accent: #111214;
+  --gold-grad: linear-gradient(135deg, #f3dfa6 0%, #c4a052 38%, #f6e7bb 62%, #a8823a 100%);
+
+  --inv: #111214;
+  --inv-2: #1c1e22;
+  --inv-ink: #f4f1ea;
+  --inv-ink-2: #a9a59c;
+
+  --ink: #141518;
+  --ink-2: #4f525a;
+  --ink-3: #868a92;
+
+  --bg: #f6f4f0;
+  --surface: #ffffff;
+  --surface-2: #efece6;
+  --surface-3: #e6e2da;
+  --line: #e5e1d9;
+  --line-2: #d3cec4;
+  --cream: #f1ece2;
+
+  /* the dark "bands" (featured, offers, footer) in both themes */
+  --taupe: #111214;
+  --taupe-2: #0c0d0f;
+  --taupe-soft: #ece5d6;
+  --taupe-ink: #f4f1ea;
+
+  --font: 'Manrope', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --serif: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  --script: 'Cormorant Garamond', Georgia, serif;
+
+  --r-lg: 16px;
+  --r-btn: 11px;
+
+  --sh-2: 0 2px 6px rgba(17, 18, 20, 0.04), 0 12px 28px rgba(17, 18, 20, 0.07);
+  --sh-3: 0 12px 28px rgba(17, 18, 20, 0.1), 0 30px 70px rgba(17, 18, 20, 0.14);
+  --sh-gold: 0 8px 22px rgba(196, 160, 82, 0.35);
+  --focus: 0 0 0 3px rgba(196, 160, 82, 0.35);
+}
+
+:root[data-theme='dark'] {
+  --brand: #f4f1ea;
+  --brand-2: #ffffff;
+  --brand-3: #dcd7cd;
+  --brand-soft: #1f2125;
+  --on-brand: #111214;
+
+  --gold: #d4af62;
+  --gold-2: #e2c27c;
+  --gold-soft: #262115;
+  --gold-ink: #dcbb72;
+  --gold-hi: #f3dfa6;
+  --on-accent: #111214;
+
+  --inv: #1a1c20;
+  --inv-2: #23262b;
+  --inv-ink: #f4f1ea;
+  --inv-ink-2: #a9a59c;
+
+  --ink: #f2efe8;
+  --ink-2: #b5b1a8;
+  --ink-3: #85827b;
+
+  --bg: #0b0c0e;
+  --surface: #141518;
+  --surface-2: #1a1c20;
+  --surface-3: #23262b;
+  --line: #23262b;
+  --line-2: #32363c;
+  --cream: #111215;
+
+  --taupe: #15171a;
+  --taupe-2: #08090a;
+  --taupe-soft: #121316;
+  --taupe-ink: #f4f1ea;
+
+  --sh-gold: 0 8px 22px rgba(212, 175, 98, 0.28);
+  --focus: 0 0 0 3px rgba(212, 175, 98, 0.35);
+}
+
+/* ---------- 2. type ---------- */
+h1,
+h2,
+h3,
+.st-title,
+.page-head h1 {
+  font-family: var(--serif);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.st-title {
+  font-size: clamp(32px, 4.2vw, 50px);
+  line-height: 1.08;
+}
+.page-head h1 {
+  font-size: clamp(36px, 5vw, 58px);
+}
+
+/* Eyebrows: small gold capitals between two gold hairlines. */
+.st-eyebrow,
+.fband-eyebrow {
+  font-family: var(--font);
+  font-style: normal;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold-ink);
+}
+.st-line {
+  width: 34px;
+  background: linear-gradient(90deg, transparent, var(--gold));
+}
+.st-line:last-child {
+  background: linear-gradient(90deg, var(--gold), transparent);
+}
+.fband-eyebrow {
+  color: var(--gold-hi);
+  margin-bottom: 10px;
+}
+
+/* ---------- 3. buttons, tags, prices ---------- */
+.btn {
+  letter-spacing: 0.01em;
+}
+.btn-primary:hover {
+  box-shadow: 0 8px 22px rgba(17, 18, 20, 0.22), 0 0 0 1px var(--gold);
+}
+:root[data-theme='dark'] .btn-primary:hover {
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--gold);
+}
+.btn-accent,
+.btn-gold,
+.btn-tan {
+  background: var(--gold-grad);
+  background-size: 180% 180%;
+  background-position: 0% 50%;
+  color: var(--on-accent);
+  transition: background-position 0.6s var(--ease), box-shadow var(--t) var(--ease), transform var(--t-fast) var(--ease);
+}
+.btn-accent:hover,
+.btn-gold:hover,
+.btn-tan:hover {
+  background: var(--gold-grad);
+  background-size: 180% 180%;
+  background-position: 100% 50%;
+  box-shadow: var(--sh-gold);
+}
+.btn-outline:hover {
+  border-color: var(--gold);
+  color: var(--ink);
+}
+.tag-accent,
+.tag-sale {
+  background: var(--gold-grad);
+  color: var(--on-accent);
+}
+.price s,
+.card-b .price s {
+  color: var(--ink-3);
+}
+
+/* ---------- 4. announcement + header ---------- */
+.announce {
+  background: #0c0d0f;
+  color: #e9e3d6;
+}
+.announce-in svg {
+  color: var(--gold);
+  opacity: 1;
+}
+.header {
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+}
+.header.stuck {
+  border-bottom-color: var(--line);
+  box-shadow: 0 6px 24px rgba(17, 18, 20, 0.06);
+}
+.nav-link.active::after {
+  background: var(--gold);
+}
+.count-dot {
+  background: var(--gold);
+  color: #111214;
+}
+
+/* ---------- 5. logo: always readable, gently animated ----------
+   A gold frame whose light slowly travels round it, a soft gold
+   glow, and a sheen that sweeps across now and then. It reads on
+   ivory, on black, and over the hero photo. */
+.logo-plate {
+  position: relative;
+  isolation: isolate;
+  border: 2px solid transparent;
+  background:
+    linear-gradient(var(--plate, #111214), var(--plate, #111214)) padding-box,
+    linear-gradient(115deg, #f6e7bb, #a8823a, #f3dfa6, #8a6a2c, #f6e7bb) border-box;
+  background-size: 100% 100%, 300% 300%;
+  box-shadow: 0 0 0 4px rgba(212, 175, 98, 0.14), 0 10px 26px rgba(10, 10, 12, 0.28);
+  animation: logo-frame 7s linear infinite, logo-glow 3.6s ease-in-out infinite;
+}
+.logo-plate::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, 0.38) 50%, transparent 62%);
+  background-size: 260% 100%;
+  background-position: 130% 0;
+  animation: logo-sheen 5.5s ease-in-out infinite 1.2s;
+}
+.logo-plate .logo-img {
+  position: relative;
+  z-index: 0;
+  border-radius: 9px;
+}
+.logo:hover .logo-plate {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 0 0 5px rgba(212, 175, 98, 0.24), 0 14px 30px rgba(10, 10, 12, 0.32);
+}
+.logo-plate.is-loading {
+  animation: none;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+.logo-plate.is-loading::after {
+  display: none;
+}
+@keyframes logo-frame {
+  to {
+    background-position: 0 0, 300% 0;
+  }
+}
+@keyframes logo-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 4px rgba(212, 175, 98, 0.12), 0 10px 26px rgba(10, 10, 12, 0.28);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(212, 175, 98, 0.22), 0 10px 30px rgba(10, 10, 12, 0.3), 0 0 26px rgba(212, 175, 98, 0.28);
+  }
+}
+@keyframes logo-sheen {
+  0%,
+  55% {
+    background-position: 130% 0;
+  }
+  100% {
+    background-position: -30% 0;
+  }
+}
+
+/* ---------- 6. hero ---------- */
+.hs-eyebrow {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(26px, 3.4vw, 46px);
+  color: var(--gold-hi);
+  letter-spacing: 0.01em;
+}
+.hs-title {
+  font-family: var(--serif);
+  font-weight: 600;
+  letter-spacing: 0;
+  font-size: clamp(42px, 6.4vw, 96px);
+}
+.hs-text {
+  font-family: var(--font);
+  font-style: normal;
+  font-weight: 500;
+}
+.hs-cta .btn-primary,
+.hs .btn-outline.on-dark {
+  border-color: rgba(241, 220, 164, 0.6);
+}
+
+/* search panel on the hero's lower edge */
+.hsx {
+  background: rgba(13, 14, 16, 0.84);
+  border: 1px solid rgba(212, 175, 98, 0.32);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+.hsx-in {
+  background: #fff;
+  color: #6f727a;
+}
+.hsx-in input {
+  color: #141518;
+}
+.hsx-in:focus-within {
+  box-shadow: 0 0 0 3px rgba(212, 175, 98, 0.55);
+}
+.hsx .hsx-btn,
+.hsx .hsx-btn:hover {
+  background: var(--gold-grad);
+  background-size: 180% 180%;
+  color: #111214;
+}
+.hsx .hsx-btn:hover {
+  background-position: 100% 50%;
+  box-shadow: 0 8px 22px rgba(212, 175, 98, 0.35);
+}
+.hsx-chips span {
+  color: var(--gold-hi);
+}
+.hsx-chips a {
+  border-color: rgba(212, 175, 98, 0.35);
+  background: rgba(255, 255, 255, 0.06);
+}
+.hsx-chips a:hover {
+  background: var(--gold-grad);
+  color: #111214;
+  border-color: transparent;
+}
+
+/* ---------- 7. sections ---------- */
+.page-head {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(196, 160, 82, 0.16), transparent 60%),
+    var(--cream);
+}
+.section-alt {
+  background: var(--cream);
+}
+
+/* category cards */
+.catrow-card {
+  border-radius: 16px;
+  border-color: var(--line);
+}
+.catrow-card:hover {
+  border-color: var(--gold);
+  box-shadow: 0 16px 36px rgba(17, 18, 20, 0.1), 0 0 0 1px var(--gold);
+}
+.catrow-img {
+  background: var(--surface-2);
+  box-shadow: 0 0 0 3px var(--surface), 0 0 0 4.5px var(--gold);
+}
+.catrow-card:hover .catrow-img {
+  box-shadow: 0 0 0 3px var(--surface), 0 0 0 4.5px var(--gold), 0 8px 22px rgba(196, 160, 82, 0.35);
+}
+.catrow-card strong {
+  font-family: var(--serif);
+  font-size: 21px;
+}
+.catrow-card em,
+:root[data-theme='dark'] .catrow-card em {
+  color: var(--gold-ink);
+}
+
+/* product cards */
+.card-img {
+  border-radius: 14px;
+}
+.card:hover .card-img {
+  box-shadow: 0 14px 34px rgba(17, 18, 20, 0.14), 0 0 0 1px rgba(196, 160, 82, 0.55);
+}
+.card-cat {
+  color: var(--gold-ink);
+  letter-spacing: 0.16em;
+}
+.card-b h3,
+.card-t {
+  font-weight: 650;
+}
+
+/* featured band, offers band, quote: obsidian with gold light */
+.fband-panel {
+  background:
+    radial-gradient(ellipse at 15% 0%, rgba(212, 175, 98, 0.18), transparent 55%),
+    var(--taupe);
+}
+.fband-card {
+  border-radius: 10px;
+  border: 1px solid transparent;
+}
+.fband-card:hover {
+  border-color: var(--gold);
+}
+.fband-card small {
+  color: var(--gold-ink);
+}
+.fband-b {
+  border-color: var(--bg);
+}
+.oband,
+:root[data-theme='dark'] .oband {
+  background:
+    radial-gradient(ellipse at 85% 10%, rgba(212, 175, 98, 0.16), transparent 50%),
+    radial-gradient(ellipse at 0% 100%, rgba(212, 175, 98, 0.1), transparent 45%),
+    #0e0f11;
+}
+.oband-meta small {
+  color: var(--gold-hi);
+}
+.oband-track i {
+  background: var(--gold);
+}
+.oband-ui button:hover {
+  background: var(--gold-grad);
+  color: #111214;
+  border-color: transparent;
+}
+.qband-in > svg {
+  color: var(--gold-hi);
+}
+
+/* promise cards */
+.fcard {
+  border-radius: 16px;
+}
+.fcard::before {
+  background: var(--gold-grad);
+}
+.fcard-i,
+:root[data-theme='dark'] .fcard-i {
+  background: var(--gold-soft);
+  color: var(--gold-ink);
+}
+.fcard:hover .fcard-i {
+  background: var(--gold-grad);
+  color: #111214;
+}
+.fcard h3 {
+  font-size: 22px;
+}
+
+/* about split frame */
+.asplit-art::before {
+  border-color: var(--gold);
+}
+.asplit-copy .btn,
+.asplit-copy .btn:hover {
+  background: var(--brand);
+  color: var(--on-brand);
+}
+
+/* gallery caption */
+.gal-i {
+  border-radius: 12px;
+}
+.gal-i span {
+  background: rgba(17, 18, 20, 0.88);
+  color: #f4f1ea;
+}
+
+/* trust strip icons */
+.trust svg,
+.trust-i svg {
+  color: var(--gold-ink);
+}
+
+/* ---------- 8. newsletter + footer ---------- */
+.nl {
+  background:
+    radial-gradient(ellipse at 100% 0%, rgba(196, 160, 82, 0.2), transparent 55%),
+    var(--taupe-soft);
+}
+.footer {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(212, 175, 98, 0.1), transparent 55%),
+    var(--taupe-2);
+  --f-ink: #f4f1ea;
+  --f-ink-2: #aeaaa1;
+  --f-line: rgba(212, 175, 98, 0.18);
+}
+.foot-grid h4 {
+  font-size: 20px;
+  color: var(--gold-hi);
+}
+.footer a:hover {
+  color: var(--gold-hi);
+}
+.socials a:hover {
+  background: var(--gold-grad);
+  color: #111214;
+  border-color: transparent;
+}
+
+/* ---------- 9. small things ---------- */
+::selection {
+  background: rgba(196, 160, 82, 0.35);
+}
+.wa-float,
+.whatsapp-float {
+  box-shadow: 0 10px 26px rgba(37, 211, 102, 0.35);
+}
+
+/* dark theme: keep the featured panel and its cards distinct */
+:root[data-theme='dark'] .fband-panel {
+  box-shadow: inset 0 0 0 1px rgba(212, 175, 98, 0.16);
+  background:
+    radial-gradient(ellipse at 15% 0%, rgba(212, 175, 98, 0.16), transparent 55%),
+    #121417;
+}
+:root[data-theme='dark'] .fband-card {
+  background: var(--surface-2);
+  border-color: var(--line-2);
+}
+
+/* the floating WhatsApp button never sits on "Back to top" */
+.foot-bot {
+  padding-right: 76px;
+}
+
+/* product card badges stay inside the card, however long the label */
+.card-tags {
+  min-width: 0;
+}
+.card-tags .tag {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 480px) {
+  .card-tags {
+    top: 8px;
+    left: 8px;
+    right: 44px;
+    gap: 4px;
+  }
+  .card-tags .tag {
+    padding: 3px 8px;
+    font-size: 10.5px;
+  }
+}
+
+/* hero copy stays readable over busy photos */
+.hs-shade {
+  background:
+    linear-gradient(90deg, rgba(8, 9, 10, 0.78) 0%, rgba(8, 9, 10, 0.46) 48%, rgba(8, 9, 10, 0.1) 82%),
+    linear-gradient(0deg, rgba(8, 9, 10, 0.55) 0%, transparent 38%);
+}
+@media (max-width: 640px) {
+  .hs-shade {
+    background: linear-gradient(0deg, rgba(8, 9, 10, 0.82) 0%, rgba(8, 9, 10, 0.5) 55%, rgba(8, 9, 10, 0.3) 100%);
+  }
+  .hs-title,
+  .hs-text {
+    text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55);
+  }
+}
