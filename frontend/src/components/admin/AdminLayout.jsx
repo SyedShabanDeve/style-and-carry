@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import SessionTimer from './SessionTimer';
 import { LogoImage } from '../layout/Logo';
+import { ActivityItem } from '../../pages/admin/AdminActivity';
 import { logout, selectIsAuthed } from '../../store/authSlice';
 import { pushToast, toggleTheme } from '../../store/uiSlice';
 import { fetchOrders } from '../../store/ordersSlice';
@@ -47,8 +48,9 @@ const PAGES = {
   '/admin/categories': ['Categories', 'Group your products, like Watches or Ladies suits'],
   '/admin/reviews': ['Reviews', 'Approve what customers wrote before it goes live'],
   '/admin/subscribers': ['Subscribers', 'People who joined your newsletter'],
-  '/admin/team': ['Team', 'Invite admins and set up email'],
+  '/admin/team': ['Team', 'Add admins, and who can do what'],
   '/admin/backup': ['Backup', 'Keep a copy of your products, photos and admins'],
+  '/admin/activity': ['Notifications', 'What your team changed, and when'],
 };
 
 /** Wraps every admin route; sends anyone without a live session to the login. */
@@ -68,6 +70,43 @@ export default function AdminLayout() {
   const [backup, setBackup] = useState(null);
   const backupChecked = useRef(0);
   const menuRef = useRef(null);
+  const [activity, setActivity] = useState(null); // { items, unread, seenAt }
+  const [bell, setBell] = useState(false);
+  const bellRef = useRef(null);
+  const isOwner = user?.role === 'owner';
+
+  /* The owner's notifications: what admins changed. Checked every minute. */
+  useEffect(() => {
+    if (!authed || !isOwner) return undefined;
+    const load = () =>
+      api
+        .get('/activity?limit=8', { auth: true })
+        .then(setActivity)
+        .catch(() => {});
+    load();
+    const t = setInterval(load, 60 * 1000);
+    const on = (e) => setActivity((a) => ({ ...(a || { items: [] }), ...e.detail }));
+    window.addEventListener('sc:activity', on);
+    return () => {
+      clearInterval(t);
+      window.removeEventListener('sc:activity', on);
+    };
+  }, [authed, isOwner]);
+
+  /* The notification panel closes on a click outside it. */
+  useEffect(() => {
+    if (!bell) return undefined;
+    const off = (e) => !bellRef.current?.contains(e.target) && setBell(false);
+    document.addEventListener('pointerdown', off);
+    return () => document.removeEventListener('pointerdown', off);
+  }, [bell]);
+
+  const markRead = async () => {
+    try {
+      const r = await api.post('/activity/seen', {}, { auth: true });
+      setActivity((a) => ({ ...(a || {}), unread: 0, seenAt: r.seenAt }));
+    } catch {}
+  };
 
   /* The account menu closes on any click outside it. */
   useEffect(() => {
@@ -114,6 +153,7 @@ export default function AdminLayout() {
   useEffect(() => {
     setOpen(false);
     setMenu(false);
+    setBell(false);
   }, [location.pathname]);
 
   if (!authed) {
@@ -135,7 +175,9 @@ export default function AdminLayout() {
   const first = user?.name || user?.username || '';
   const backupDue = user?.role === 'owner' && Boolean(backup?.due);
   const showBackupNote = backupDue && location.pathname !== '/admin/backup';
-  const alerts = pending + waitingReviews + (backupDue ? 1 : 0);
+  const unread = isOwner ? activity?.unread || 0 : 0;
+  const alerts = pending + waitingReviews + (backupDue ? 1 : 0) + unread;
+  const seenAt = activity?.seenAt ? Date.parse(activity.seenAt) : 0;
   const bellTo = pending ? '/admin/orders?status=pending' : waitingReviews ? '/admin/reviews' : backupDue ? '/admin/backup' : '/admin/orders?status=pending';
   const backupLine = backup?.lastBackupAt
     ? `Last backup ${backup.daysSince} day${backup.daysSince === 1 ? '' : 's'} ago`
@@ -183,7 +225,8 @@ export default function AdminLayout() {
 
           <div className="side-sep" />
           {nav('/admin/settings', Cog, 'Settings')}
-          {user?.role === 'owner' && nav('/admin/team', Users, 'Team')}
+          {nav('/admin/team', Users, 'Team')}
+          {isOwner && nav('/admin/activity', Bell, 'Notifications', unread > 0 && <span className="tally">{unread > 99 ? '99+' : unread}</span>)}
           {user?.role === 'owner' && nav('/admin/backup', Database, 'Backup', backupDue && <span className="tally tally-warn" aria-label="Backup needed">!</span>)}
           <button type="button" className="side-link" onClick={signOut}>
             <LogOut size={17} /> <span>Log out</span>
@@ -254,10 +297,73 @@ export default function AdminLayout() {
             <input name="q" placeholder="Search orders, names, phones…" aria-label="Search orders" />
           </form>
 
-          <Link to={bellTo} className="icon-btn top-bell" aria-label={`${alerts} things need your attention`} title="Needs attention">
-            <Bell size={18} />
-            {alerts > 0 && <span className="count-dot">{alerts > 99 ? '99+' : alerts}</span>}
-          </Link>
+          {isOwner ? (
+            <div className="top-bell-wrap" ref={bellRef}>
+              <button
+                type="button"
+                className="icon-btn top-bell"
+                onClick={() => setBell((b) => !b)}
+                aria-expanded={bell}
+                aria-haspopup="dialog"
+                aria-label={`Notifications: ${alerts} need your attention`}
+                title="Notifications"
+              >
+                <Bell size={18} />
+                {alerts > 0 && <span className="count-dot">{alerts > 99 ? '99+' : alerts}</span>}
+              </button>
+              {bell && (
+                <div className="nt-panel" role="dialog" aria-label="Notifications">
+                  <div className="nt-head">
+                    <b>Notifications</b>
+                    {unread > 0 && (
+                      <button type="button" className="link-btn" onClick={markRead}>
+                        Mark all as read
+                      </button>
+                    )}
+                  </div>
+                  {(pending > 0 || waitingReviews > 0 || backupDue) && (
+                    <div className="nt-need">
+                      {pending > 0 && (
+                        <Link to="/admin/orders?status=pending">
+                          <Bag size={15} /> {pending} order{pending === 1 ? '' : 's'} waiting for you <ArrowRight size={13} />
+                        </Link>
+                      )}
+                      {waitingReviews > 0 && (
+                        <Link to="/admin/reviews">
+                          <Star size={15} /> {waitingReviews} review{waitingReviews === 1 ? '' : 's'} to approve <ArrowRight size={13} />
+                        </Link>
+                      )}
+                      {backupDue && (
+                        <Link to="/admin/backup">
+                          <Database size={15} /> Backup needed: {backupLine.toLowerCase()} <ArrowRight size={13} />
+                        </Link>
+                      )}
+                    </div>
+                  )}
+                  <div className="nt-sub">What your team changed</div>
+                  <div className="nt-list">
+                    {!activity ? (
+                      <p className="nt-empty">Loading…</p>
+                    ) : activity.items?.length ? (
+                      activity.items.map((a) => (
+                        <ActivityItem key={a.id} a={a} unread={a.by?.id !== user?.id && Date.parse(a.at) > seenAt} onClick={() => setBell(false)} />
+                      ))
+                    ) : (
+                      <p className="nt-empty">Nothing yet. When an admin adds a product or changes something, it shows here.</p>
+                    )}
+                  </div>
+                  <Link to="/admin/activity" className="nt-all">
+                    See all notifications <ArrowRight size={13} />
+                  </Link>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link to={bellTo} className="icon-btn top-bell" aria-label={`${alerts} things need your attention`} title="Needs attention">
+              <Bell size={18} />
+              {alerts > 0 && <span className="count-dot">{alerts > 99 ? '99+' : alerts}</span>}
+            </Link>
+          )}
           <button className="icon-btn" onClick={() => dispatch(toggleTheme())} aria-label="Toggle dark mode" title="Light / dark">
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
@@ -283,11 +389,9 @@ export default function AdminLayout() {
                 <Link to="/admin/settings#password" role="menuitem" onClick={() => setMenu(false)}>
                   <Lock size={15} /> Change password
                 </Link>
-                {user?.role === 'owner' && (
-                  <Link to="/admin/team" role="menuitem" onClick={() => setMenu(false)}>
-                    <Users size={15} /> Team
-                  </Link>
-                )}
+                <Link to="/admin/team" role="menuitem" onClick={() => setMenu(false)}>
+                  <Users size={15} /> Team
+                </Link>
                 {user?.role === 'owner' && (
                   <Link to="/admin/backup" role="menuitem" onClick={() => setMenu(false)}>
                     <Database size={15} /> Backup

@@ -15,7 +15,7 @@ import crypto from 'node:crypto';
 import bcrypt from 'bcryptjs';
 import rateLimit from 'express-rate-limit';
 import { read, update, uid } from '../db.js';
-import { requireAuth, requireOwner } from '../middleware/auth.js';
+import { requireAuth, requireOwner, requireAdmin } from '../middleware/auth.js';
 import { sendMail, mailConfig, mailReady, esc } from '../lib/mailer.js';
 import { str } from '../lib/clean.js';
 
@@ -57,7 +57,11 @@ const publicUser = (u) => ({
   invitedAt: u.invitedAt || null,
   verifiedAt: u.verifiedAt || null,
   linkExpires: u.status === 'pending' ? u.verifyExpires || null : null,
+  phone: u.phone || '',
+  addedByName: u.addedByName || '',
 });
+
+const PHONE = /^[0-9+ -]{7,20}$/;
 
 /** Creates a fresh link for a pending admin and emails it. */
 async function sendInvite(req, userId) {
@@ -89,10 +93,67 @@ async function sendInvite(req, userId) {
   return { user, link, mail };
 }
 
+/* ---------- every admin: see the team, add an admin with a password ---------- */
+
+router.get('/', requireAuth, requireAdmin, (req, res) => {
+  const owner = req.user.role === 'owner';
+  res.json({ users: read().users.map(publicUser), mailReady: owner ? mailReady() : undefined, canManage: owner });
+});
+
+/**
+ * Adds an admin straight away with the password given here, no email needed.
+ * The owner and admins can both do this; only the owner can remove anyone.
+ */
+router.post('/direct', requireAuth, requireAdmin, (req, res) => {
+  const name = str(req.body?.name, 60);
+  const email = str(req.body?.email, 120).toLowerCase();
+  const phone = str(req.body?.phone, 20);
+  const password = String(req.body?.password || '');
+  if (name.length < 2) return res.status(400).json({ error: 'Please enter the admin’s name' });
+  if (!EMAIL.test(email)) return res.status(400).json({ error: 'Please enter a valid email address' });
+  if (phone && !PHONE.test(phone)) return res.status(400).json({ error: 'Please enter a valid phone number, like 0300 1234567' });
+  if (password.length < 8) return res.status(400).json({ error: 'The password needs at least 8 characters' });
+  if (read().users.some((u) => (u.email || u.username).toLowerCase() === email)) {
+    return res.status(409).json({ error: 'Someone with this email is already on the team' });
+  }
+  const user = {
+    id: uid('usr'),
+    username: email,
+    email,
+    name,
+    phone,
+    role: 'admin',
+    status: 'active',
+    passwordHash: bcrypt.hashSync(password, 10),
+    invitedBy: req.user.id,
+    addedByName: req.user.name || req.user.email,
+    createdAt: new Date().toISOString(),
+  };
+  update((db) => db.users.push(user));
+  res.status(201).json({ user: publicUser(user) });
+});
+
 /* ---------- owner only ---------- */
 
-router.get('/', requireAuth, requireOwner, (req, res) => {
-  res.json({ users: read().users.map(publicUser), mailReady: mailReady() });
+/** The owner sets a new password for an admin, e.g. when they forgot it. */
+router.put('/:id/password', requireAuth, requireOwner, (req, res) => {
+  const password = String(req.body?.password || '');
+  if (password.length < 8) return res.status(400).json({ error: 'The password needs at least 8 characters' });
+  const u = read().users.find((x) => x.id === req.params.id);
+  if (!u) return res.status(404).json({ error: 'Admin not found' });
+  if (u.role === 'owner') return res.status(400).json({ error: 'Change your own password under Settings' });
+  update((db) => {
+    const x = db.users.find((y) => y.id === u.id);
+    x.passwordHash = bcrypt.hashSync(password, 10);
+    x.mustChangePassword = false;
+    if (x.status === 'pending') {
+      x.status = 'active';
+      delete x.verifyTokenHash;
+      delete x.verifyExpires;
+    }
+    x.updatedAt = new Date().toISOString();
+  });
+  res.json({ ok: true, user: publicUser(read().users.find((x) => x.id === u.id)) });
 });
 
 router.post('/', requireAuth, requireOwner, async (req, res) => {

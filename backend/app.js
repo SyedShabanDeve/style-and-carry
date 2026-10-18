@@ -20,6 +20,8 @@ import reviewRoutes from './routes/reviews.js';
 import newsletterRoutes from './routes/newsletter.js';
 import teamRoutes from './routes/team.js';
 import backupRoutes from './routes/backup.js';
+import activityRoutes from './routes/activity.js';
+import { activityLogger } from './lib/activity.js';
 import { read } from './db.js';
 import { SESSION_SECONDS } from './middleware/auth.js';
 
@@ -100,6 +102,9 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Notes every change an admin makes, for the owner's notifications.
+app.use('/api', activityLogger);
+
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
@@ -111,6 +116,7 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/team', teamRoutes);
 app.use('/api/backup', backupRoutes);
+app.use('/api/activity', activityRoutes);
 
 app.use('/api', (req, res) => res.status(404).json({ error: 'No such endpoint' }));
 

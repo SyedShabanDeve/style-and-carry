@@ -34,6 +34,8 @@ const EMPTY = {
   counters: { order: 1000 },
   // when the owner last downloaded a backup, and similar housekeeping
   meta: {},
+  // who changed what in the dashboard (newest first), see lib/activity.js
+  activity: [],
 };
 
 let cache = null;

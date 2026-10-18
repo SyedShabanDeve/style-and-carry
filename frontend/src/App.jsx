@@ -37,6 +37,7 @@ const AdminReviews = lazy(() => import('./pages/admin/AdminReviews'));
 const AdminSubscribers = lazy(() => import('./pages/admin/AdminSubscribers'));
 const AdminTeam = lazy(() => import('./pages/admin/AdminTeam'));
 const AdminBackup = lazy(() => import('./pages/admin/AdminBackup'));
+const AdminActivity = lazy(() => import('./pages/admin/AdminActivity'));
 const VerifyEmail = lazy(() => import('./pages/admin/VerifyEmail'));
 
 function Loading() {
@@ -105,6 +106,7 @@ export default function App() {
             <Route path="subscribers" element={<AdminSubscribers />} />
             <Route path="team" element={<AdminTeam />} />
             <Route path="backup" element={<AdminBackup />} />
+            <Route path="activity" element={<AdminActivity />} />
           </Route>
         </Routes>
       </Suspense>
